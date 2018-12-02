@@ -1,0 +1,24 @@
+{
+  "name": "ipc-demo",
+  "version": "1.0.0",
+  "description": "Demo of IPC with named pipes on Windows",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ooboqoo/ipc-demo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ooboqoo/ipc-demo/issues"
+  },
+  "homepage": "https://github.com/ooboqoo/ipc-demo#readme",
+  "devDependencies": {
+    "@types/node": "^10.12.11",
+    "typescript": "^3.2.1"
+  }
+}
