@@ -40,7 +40,7 @@ export class Client {
     try {
       this.reset()
       let pipe = net.connect(address)
-      pipe.setEncoding('binary')
+      // pipe.setEncoding('binary')  // 设置这条会导致收到的消息都被转成 string
       pipe.on('data', this.processData.bind(this))
       pipe.on('error', (err: any) => {
         this.disconnect()
@@ -61,9 +61,8 @@ export class Client {
   emitError (err: any, reason: string) {
     if (this.onError) { this.onError(err, reason) }
   }
-  processData (buf: string | Buffer) {
-    if (typeof buf === 'string') { buf = Buffer.from(buf) }
-    this.buffers.push(buf)
+  processData (buf?: Buffer) {
+    if (buf) { this.buffers.push(buf) }
     const frame = readFrame(this.buffers, this.currentFrame)
     if (frame.step === ReadStep.COMPLETE) {
       if (!this.server) {
@@ -73,6 +72,8 @@ export class Client {
       } else if (this.onData) {
         this.onData(frame)
       }
+      // 处理同时到达的多条消息
+      this.processData()
     }
   }
 
