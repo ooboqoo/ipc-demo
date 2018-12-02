@@ -7,8 +7,10 @@ const Errors = {
   ERR_SEND: "err_send", // 发送数据失败, 如需重发, 可能需要记录上次发送的数据
 }
 
+const PIPE_NAME = 'mypipe'
+const PIPE_PATH = '\\\\.\\pipe\\' + PIPE_NAME
+
 export class Client {
-  name: string
   pipe: net.Socket
   buffers: Array<Buffer>
   currentFrame: Frame
@@ -32,10 +34,10 @@ export class Client {
   reset () {
     this.pipe = null
     this.buffers = []
-    this.currentFrame = null
+    this.currentFrame = {}
     this.server = null
   }
-  connect (address: string) {
+  connect (address: string = PIPE_PATH) {
     if (this.pipe) { return }
     try {
       this.reset()
