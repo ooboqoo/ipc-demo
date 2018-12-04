@@ -133,10 +133,10 @@ function readBuffer (buffers: Buffer[], size: number): Buffer {
 
 /**
  * 发送数据包
+ * 注: 写入管道可能出现的报错在 pipe.on('error') 处理
  * @param dst 目标地址，仅支持 ASCII 字符
  * @param src 发送地址，仅支持 ASCII 字符
  * @param type 传输的数据类型
- * @throws {Error} 写入管道时可能报错
  */
 export function sendFrame (pipe: Socket, dst: string, src: string, type: number, buf: Buffer) {
   if (buf === undefined || buf === null) { return }
@@ -145,31 +145,31 @@ export function sendFrame (pipe: Socket, dst: string, src: string, type: number,
   let dstLen = dst.length
   let bufLen = buf.length
   let totalSize = 14 + srcLen + dstLen + bufLen;
-  let data = new Uint8Array(14)
+  let head = new Uint8Array(14)
 
   // 头部 (4字节) - ['P', 'F', Version, Type]
-  data[0] = 80
-  data[1] = 70
-  data[2] = PROTOCOL_VERSION
-  data[3] = type
+  head[0] = 80
+  head[1] = 70
+  head[2] = PROTOCOL_VERSION
+  head[3] = type
 
   // 传输帧的总字节数(头部 + 内容) (4字节)
-  data[4] = totalSize >> 24
-  data[5] = totalSize >> 16
-  data[6] = totalSize >> 8
-  data[7] = totalSize
+  head[4] = totalSize >> 24
+  head[5] = totalSize >> 16
+  head[6] = totalSize >> 8
+  head[7] = totalSize
 
   // 来源和目标地址长度 (2字节)
-  data[8] = srcLen
-  data[9] = dstLen
+  head[8] = srcLen
+  head[9] = dstLen
 
   // 传输内容的字节数 (4字节)
-  data[10] = bufLen >> 24
-  data[11] = bufLen >> 16
-  data[12] = bufLen >> 8
-  data[13] = bufLen
+  head[10] = bufLen >> 24
+  head[11] = bufLen >> 16
+  head[12] = bufLen >> 8
+  head[13] = bufLen
 
-  pipe.write(data)
+  pipe.write(head)
   pipe.write(src + dst)
   pipe.write(buf)
 }

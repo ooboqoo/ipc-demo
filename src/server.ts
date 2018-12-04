@@ -59,7 +59,7 @@ function processData (buf?: Buffer) {
 }
 
 const masterService = {
-  pipe: new net.Socket(),
+  pipe: null as net.Socket,
   localService: {
     name: MASTER_SERVICE_NAME
   },
